@@ -1,47 +1,45 @@
 # Use Case Diagram – HireLens AI
 
 ```mermaid
+flowchart LR
+
 %% Actors
-actor Candidate
-actor Recruiter
-actor Admin
+Candidate([Candidate])
+Recruiter([Recruiter])
+Admin([Admin])
 
 %% System Boundary
-rectangle "HireLens AI System" {
+subgraph "HireLens AI System"
 
-  %% Candidate Use Cases
-  (Register / Login) as UC1
-  (Upload Resume) as UC2
-  (Resume Parsing & Skill Extraction) as UC3
-  (View Structured Resume Analysis) as UC4
-  (View Job Match Scores) as UC5
-  (Skill Gap Analysis) as UC6
-  (Generate Learning Roadmap) as UC7
-  (Compare Resume Versions) as UC8
+UC1((Register / Login))
+UC2((Upload Resume))
+UC3((Resume Parsing & Skill Extraction))
+UC4((View Structured Resume Analysis))
+UC5((View Job Match Scores))
+UC6((Skill Gap Analysis))
+UC7((Generate Learning Roadmap))
+UC8((Compare Resume Versions))
 
-  %% Recruiter Use Cases
-  (Upload Job Description) as UC9
-  (JD Parsing & Skill Extraction) as UC10
-  (View Ranked Candidates) as UC11
-  (View Match Explanation) as UC12
-  (Provide Feedback) as UC13
-  (View Hiring Analytics) as UC14
+UC9((Upload Job Description))
+UC10((JD Parsing & Skill Extraction))
+UC11((View Ranked Candidates))
+UC12((View Match Explanation))
+UC13((Provide Feedback))
+UC14((View Hiring Analytics))
 
-  %% Admin Use Cases
-  (Monitor System Analytics) as UC15
-  (Adjust Scoring Weights) as UC16
-  (View Model Performance Metrics) as UC17
-  (Monitor Bias Indicators) as UC18
-  (Manage Model Versions) as UC19
+UC15((Monitor System Analytics))
+UC16((Adjust Scoring Weights))
+UC17((View Model Performance Metrics))
+UC18((Monitor Bias Indicators))
+UC19((Manage Model Versions))
 
-  %% Core Engine Use Cases
-  (Compute Match Score) as UC20
-  (Generate Embeddings) as UC21
-  (Adaptive Scoring Update) as UC22
-}
+UC20((Compute Match Score))
+UC21((Generate Embeddings))
+UC22((Adaptive Scoring Update))
+
+end
 
 %% Associations
-
 Candidate --> UC1
 Candidate --> UC2
 Candidate --> UC4
@@ -63,19 +61,12 @@ Admin --> UC17
 Admin --> UC18
 Admin --> UC19
 
-%% Include Relationships
-
-UC2 --> UC3 : <<include>>
-UC3 --> UC21 : <<include>>
-UC9 --> UC10 : <<include>>
-UC10 --> UC21 : <<include>>
-UC5 --> UC20 : <<include>>
-UC11 --> UC20 : <<include>>
-UC13 --> UC22 : <<include>>
-
-%% Extend Relationships
-
-UC6 --> UC5 : <<extend>>
-UC7 --> UC6 : <<extend>>
-UC12 --> UC11 : <<extend>>
-UC17 --> UC15 : <<extend>>
+%% Internal Includes
+UC2 --> UC3
+UC3 --> UC21
+UC9 --> UC10
+UC10 --> UC21
+UC5 --> UC20
+UC11 --> UC20
+UC13 --> UC22
+```
