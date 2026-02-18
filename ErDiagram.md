@@ -3,16 +3,12 @@
 ```mermaid
 erDiagram
 
-%% =========================
-%% 1️⃣ Identity & Access Layer
-%% =========================
-
 USER {
     string _id PK
     string name
-    string email UNIQUE
+    string email
     string passwordHash
-    string role  "CANDIDATE | RECRUITER | ADMIN"
+    string role
     boolean isActive
     date createdAt
     date updatedAt
@@ -25,13 +21,6 @@ REFRESH_TOKEN {
     date expiresAt
     boolean isRevoked
 }
-
-USER ||--o{ REFRESH_TOKEN : owns
-
-
-%% =========================
-%% 2️⃣ Candidate Domain
-%% =========================
 
 CANDIDATE_PROFILE {
     string _id PK
@@ -47,7 +36,6 @@ RESUME {
     string candidateId FK
     string version
     string rawText
-    vector embeddingVector
     number experienceYears
     date createdAt
 }
@@ -67,16 +55,6 @@ RESUME_PROJECT {
     string techStack
 }
 
-CANDIDATE_PROFILE ||--|| USER : belongs_to
-CANDIDATE_PROFILE ||--o{ RESUME : has
-RESUME ||--o{ RESUME_SKILL : contains
-RESUME ||--o{ RESUME_PROJECT : includes
-
-
-%% =========================
-%% 3️⃣ Recruiter Domain
-%% =========================
-
 RECRUITER_PROFILE {
     string _id PK
     string userId FK
@@ -91,7 +69,6 @@ JOB_DESCRIPTION {
     string title
     string description
     number experienceRequired
-    vector embeddingVector
     date createdAt
 }
 
@@ -102,15 +79,6 @@ JOB_REQUIRED_SKILL {
     number importanceWeight
 }
 
-RECRUITER_PROFILE ||--|| USER : belongs_to
-RECRUITER_PROFILE ||--o{ JOB_DESCRIPTION : posts
-JOB_DESCRIPTION ||--o{ JOB_REQUIRED_SKILL : requires
-
-
-%% =========================
-%% 4️⃣ Matching Engine Layer
-%% =========================
-
 MATCH_RESULT {
     string _id PK
     string resumeId FK
@@ -120,23 +88,14 @@ MATCH_RESULT {
     number experienceScore
     number projectScore
     string explanation
-    string scoringStrategy
     date createdAt
 }
-
-RESUME ||--o{ MATCH_RESULT : evaluated_in
-JOB_DESCRIPTION ||--o{ MATCH_RESULT : produces
-
-
-%% =========================
-%% 5️⃣ Feedback & Adaptive Learning Layer
-%% =========================
 
 FEEDBACK {
     string _id PK
     string matchResultId FK
     string recruiterId FK
-    string decision  "SELECTED | REJECTED | STRONG_MATCH"
+    string decision
     number rating
     string comments
     date createdAt
@@ -162,15 +121,6 @@ MODEL_PERFORMANCE {
     date evaluatedAt
 }
 
-MATCH_RESULT ||--o{ FEEDBACK : receives
-MODEL_VERSION ||--o{ MATCH_RESULT : influences
-MODEL_VERSION ||--o{ MODEL_PERFORMANCE : evaluated_by
-
-
-%% =========================
-%% 6️⃣ Analytics & Logging Layer
-%% =========================
-
 ANALYTICS_EVENT {
     string _id PK
     string userId FK
@@ -179,13 +129,26 @@ ANALYTICS_EVENT {
     date createdAt
 }
 
-SYSTEM_LOG {
-    string _id PK
-    string level
-    string message
-    string source
-    date createdAt
-}
+%% Relationships
+
+USER ||--o{ REFRESH_TOKEN : owns
+USER ||--|| CANDIDATE_PROFILE : has
+USER ||--|| RECRUITER_PROFILE : has
+
+CANDIDATE_PROFILE ||--o{ RESUME : uploads
+RESUME ||--o{ RESUME_SKILL : contains
+RESUME ||--o{ RESUME_PROJECT : includes
+
+RECRUITER_PROFILE ||--o{ JOB_DESCRIPTION : posts
+JOB_DESCRIPTION ||--o{ JOB_REQUIRED_SKILL : requires
+
+RESUME ||--o{ MATCH_RESULT : evaluated
+JOB_DESCRIPTION ||--o{ MATCH_RESULT : generates
+
+MATCH_RESULT ||--o{ FEEDBACK : receives
+
+MODEL_VERSION ||--o{ MATCH_RESULT : influences
+MODEL_VERSION ||--o{ MODEL_PERFORMANCE : evaluated
 
 USER ||--o{ ANALYTICS_EVENT : generates
 ```
